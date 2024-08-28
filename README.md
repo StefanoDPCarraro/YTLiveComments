@@ -11,13 +11,12 @@ cd YTLiveComments
 ```bash
 python3 -m venv ambiente_youtube
 ```
-
-######If using windows:
+If using windows:
 ```bash
 .\ambiente_youtube\Scripts\activate
 ```
 
-######If using linux:
+If using linux:
 ```bash
 source ambiente_youtube/bin/activate
 ```
