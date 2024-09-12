@@ -44,6 +44,3 @@ def gerar_nuvem_palavras(json_file):
     # Salvar a nuvem de palavras em um arquivo
     wordcloud.to_file(output_file)
     print(f'Nuvem de palavras salva em: {output_file}')
-
-# Chamar a função com o arquivo JSON
-gerar_nuvem_palavras('comments.json')

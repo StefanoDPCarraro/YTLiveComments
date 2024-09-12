@@ -1,10 +1,27 @@
 import streamlit as st
 from PIL import Image
+from nuvem import gerar_nuvem_palavras
+import json
 
-st.title('Image Classification')
+def landing_page():
+    st.title('Análise de chat')
 
-input_link = st.text_input('Link do vídeo do youtube')
+    comments_json = st.file_uploader('Comentários em .json', type='json')
 
-image = Image.open('output/nuvem_palavras.png')
+    if st.button('Iniciar análise'):
+        analyze_chat(comments_json)
 
-st.image(image, caption='Uploaded Image', use_column_width=True)
+def analyze_chat(comments_json):
+    if comments_json is not None:
+        # Chama analise
+        comments_file = comments_json.read()
+        data = json.loads(comments_file)
+        gerar_nuvem_palavras(data)
+        dashboard()
+    else:
+        st.error('Faça o upload do arquivo de comentários')
+
+def dashboard():
+    st.image('output/nuvem_de_palavras.png')
+
+landing_page()
