@@ -1,10 +1,12 @@
 import requests
 from dateutil import parser
-import pytz
+from dotenv import load_dotenv
 import json
 import time
+import os
 
-API_KEY = 'AIzaSyAIYIo9mqmNhpbqi99GcuJkvjhddgphZs4'
+load_dotenv()
+API_KEY = os.getenv('GOOGLE_API_KEY')
 VIDEO_ID = 'W049t2oII4Q'
 WAIT_TIME = 20  # Tempo de espera em segundos
 
