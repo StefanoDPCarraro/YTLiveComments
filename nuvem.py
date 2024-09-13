@@ -5,20 +5,24 @@ import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
 import nltk
 
+def file_to_json(json_file):    
+    with open(json_file, 'r') as file:
+        data = json.load(file)
+    return data
+
 # Baixar stopwords em português, se ainda não estiver disponível
 nltk.download('stopwords')
 
 # Função para processar o JSON e gerar a nuvem de palavras
-def gerar_nuvem_palavras(json_file):
+def gerar_nuvem_palavras(json_data, complemento=''):
     # Carregar o arquivo JSON
-    with open(json_file, 'r') as file:
-        data = json.load(file)
+    
 
     # Inicializar uma lista para armazenar todas as palavras
     all_words = []
 
     # Processar cada item no JSON
-    for item in data:
+    for item in json_data:
         # Converter a mensagem para minúsculas
         message = item['message'].lower()
         # Separar a mensagem em palavras e adicionar à lista
@@ -39,8 +43,10 @@ def gerar_nuvem_palavras(json_file):
     os.makedirs(output_dir, exist_ok=True)
 
     # Caminho para salvar o arquivo
-    output_file = os.path.join(output_dir, 'nuvem_palavras.png')
+    output_file = os.path.join(output_dir, f'nuvem_palavras{complemento}.png')
 
     # Salvar a nuvem de palavras em um arquivo
     wordcloud.to_file(output_file)
     print(f'Nuvem de palavras salva em: {output_file}')
+
+    return output_file

@@ -4,3 +4,5 @@ pytz
 python-dotenv
 wordcloud
 nltk
+pandas
+matplotlib.pyplot
