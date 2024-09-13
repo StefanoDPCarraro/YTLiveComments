@@ -4,8 +4,8 @@ import pytz
 import json
 import time
 
-API_KEY = ''
-VIDEO_ID = ''
+API_KEY = 'AIzaSyAIYIo9mqmNhpbqi99GcuJkvjhddgphZs4'
+VIDEO_ID = 'W049t2oII4Q'
 WAIT_TIME = 20  # Tempo de espera em segundos
 
 def get_live_details():
@@ -30,7 +30,10 @@ def get_chat_messages(live_chat_id, live_start_time_utc):
         for item in chat_data["items"]:
             comment_id = item.get("id")
             author = item["authorDetails"]["displayName"]
-            message = item["snippet"]["displayMessage"]
+            try:
+                message = item["snippet"]["displayMessage"]
+            except:
+                message = ""
             timestamp = item["snippet"].get("publishedAt")
             
             if not timestamp or not comment_id:

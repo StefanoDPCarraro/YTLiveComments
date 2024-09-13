@@ -32,7 +32,7 @@ def gerar_nuvem_palavras(json_file):
     stop_words = set(stopwords.words('portuguese'))
 
     # Criar a nuvem de palavras
-    wordcloud = WordCloud(stopwords=stop_words, background_color='white').generate(text)
+    wordcloud = WordCloud(stopwords=stop_words, background_color='white', width=1920, height=1080).generate(text)
 
     # Criar a pasta 'output' se não existir
     output_dir = 'output'
