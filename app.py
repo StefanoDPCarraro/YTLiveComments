@@ -32,7 +32,7 @@ def most_comments():
         authors = get_top_authors(st.session_state['comments_json'], n=n_authors)
         for author, count in authors:
             with st.expander(f'{author}: {count} comentários'):
-                path, comments = get_author_comments(author, st.session_state['comments_json'])
+                path, comments = get_author_comments(author, 'comments.json')
                 st.image(path)
                 for comment in comments:
                     st.write(f"{comment['time_elapsed']} - {comment['message']}")
