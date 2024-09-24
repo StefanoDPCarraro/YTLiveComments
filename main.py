@@ -7,7 +7,7 @@ import os
 
 load_dotenv()
 API_KEY = os.getenv('GOOGLE_API_KEY')
-VIDEO_ID = 'W049t2oII4Q'
+VIDEO_ID = os.getenv('VIDEO_ID')
 WAIT_TIME = 20  # Tempo de espera em segundos
 
 def get_live_details():
