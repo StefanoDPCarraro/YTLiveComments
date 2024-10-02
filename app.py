@@ -15,7 +15,7 @@ def landing_page():
 
 def comments_peak():
     st.title('Picos de Comentários')
-    num_peaks = st.slider('Número de picos', 1, 10, 5)
+    num_peaks = st.slider('Número de picos', 1, 15, 5)
     peaks, image_path = get_peaks(st.session_state['comments_json'], top=num_peaks)
     st.image(image_path)
     for index, peak in enumerate(peaks):
