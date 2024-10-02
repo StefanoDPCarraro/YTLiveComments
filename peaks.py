@@ -47,9 +47,9 @@ def get_peaks(comments_json, mnt=10, top=3):
 
     plt.figure(figsize=(14, 6))
     plt.plot(df_resampled['time_elapsed'], df_resampled['Comentários'])
-    plt.xlabel('Tempo')
-    plt.ylabel('Comentários')
-    plt.title('Comentários por intervalo de tempo')
+    plt.xlabel('Time')
+    plt.ylabel('Comments')
+    plt.title('Comments per 10 minutes')
 
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
     plt.gca().xaxis.set_major_locator(mdates.MinuteLocator(interval=mnt))

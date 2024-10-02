@@ -22,9 +22,9 @@ def get_author_comments(author, comments_json, interval=30):
 
     plt.figure(figsize=(14, 6))
     plt.plot(resampled_df.index, resampled_df.values)
-    plt.xlabel('Tempo')
-    plt.ylabel('Comentários')
-    plt.title(f'Comentários a cada {interval} minutos')
+    plt.xlabel('Time')
+    plt.ylabel('Comments')
+    plt.title(f'Comments each {interval} minutes')
 
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 

@@ -9,81 +9,77 @@ st.session_state['comments_json'] = 'comments.json'
 st.session_state['partitions'] = get_partitions(st.session_state['comments_json'])
 
 def landing_page():
-    st.title('Em progresso')
+    st.title('In progress')
 
-    st.write('Selecione uma das opções no menu lateral para visualizar as análises')
+    st.write('Select one of the options on the sidebar to start analyzing the comments')
 
 def comments_peak():
-    st.title('Picos de Comentários')
-    num_peaks = st.slider('Número de picos', 1, 15, 5)
+    st.title('Comments Peak')
+    num_peaks = st.slider('Number of peaks on display', 1, 15, 5)
     peaks, image_path = get_peaks(st.session_state['comments_json'], top=num_peaks)
     st.image(image_path)
     for index, peak in enumerate(peaks):
-        with st.expander(f'Pico {index+1}: {peak["comments"]} comentários'):
-            st.write(f'Início: {peak["start"]}')
-            st.write(f'Fim: {peak["end"]}')
+        with st.expander(f'Peak {index+1}: {peak["comments"]} comments'):
+            st.write(f'Start: {peak["start"]}')
+            st.write(f'End: {peak["end"]}')
             st.image(gerar_nuvem_palavras(peak['messages'], complemento=f'_pico_{index}'))
 
 
 def most_comments():
-    st.title('Maiores comentaristas')
-    n_authors = st.slider('Número de comentaristas', 1, 10, 5)
+    st.title('Top commenters')
+    n_authors = st.slider('Number of commenters on display', 1, 10, 5)
     if st.session_state['comments_json'] is not None:
         authors = get_top_authors(st.session_state['comments_json'], n=n_authors)
         for author, count in authors:
-            with st.expander(f'{author}: {count} comentários'):
+            with st.expander(f'{author}: {count} comments'):
                 path, comments = get_author_comments(author, 'comments.json')
                 st.image(path)
                 for comment in comments:
                     st.write(f"{comment['time_elapsed']} - {comment['message']}")
 
-
-    else:
-        st.error('Faça o upload do arquivo de comentários')
-
 def show_partitions():
-    st.title('Partições')
-    num_part = st.slider('Número de partições', 1, 10, 5)
+    st.title('Partitions')
+    num_part = st.slider('Number of partitions on display', 1, 10, 5)
     st.session_state['partitions'] = get_partitions(st.session_state['comments_json'], n=num_part)
     for index, partition in st.session_state['partitions'].items():
-        with st.expander(f'Partição {index+1}'):
-            st.write(f'Comentários: {len(partition["comments"])}')
-            st.write(f'Início: {partition["start"]}')
-            st.write(f'Fim: {partition["end"]}')
+        with st.expander(f'Partition {index+1}'):
+            st.write(f'Comments: {len(partition["comments"])}')
+            st.write(f'Start: {partition["start"]}')
+            st.write(f'End: {partition["end"]}')
             st.image(gerar_nuvem_palavras(partition['comments'], complemento=f'_particao_{index}'))
 
 def show_stats():
-    st.title('Estatísticas')
+    st.title('Stats')
     comments_data = file_to_json(st.session_state['comments_json'])
-    st.write(f'Número total de comentários: {len(comments_data)}')
-    st.write(f'Número total de pessoas que comentaram: {len(set([comment["author"] for comment in comments_data]))}')
-    st.write(f'Média de comentários por pessoas: {len(comments_data) / len(set([comment["author"] for comment in comments_data]))}')
-    st.write(f'Número total de palavras: {sum([len(comment["message"].split()) for comment in comments_data])}')
-    st.write(f'Número total de palavras únicas: {len(set([word for comment in comments_data for word in comment["message"].split()]))}')
-    st.write(f'Média de palavras por comentário: {sum([len(comment["message"].split()) for comment in comments_data]) / len(comments_data)}')
+    st.write(f'Total comments: {len(comments_data)}')
+    st.write(f'Total comment authors: {len(set([comment["author"] for comment in comments_data]))}')
+    st.write(f'Average of comments by person: {len(comments_data) / len(set([comment["author"] for comment in comments_data]))}')
+    st.write(f'Total words: {sum([len(comment["message"].split()) for comment in comments_data])}')
+    st.write(f'Total unique words: {len(set([word for comment in comments_data for word in comment["message"].split()]))}')
+    st.write(f'Average words by comment: {sum([len(comment["message"].split()) for comment in comments_data]) / len(comments_data)}')
     _, new_mem = get_new_members(comments_data)
-    st.write(f'Número de membros novos: {len(new_mem)}')
+    st.write(f'New members count: {len(new_mem)}')
 
 def show_new_members():
     st.title('Membros')
     member_data = file_to_json(st.session_state['comments_json'])
     path, members = get_new_members(member_data)
     st.image(path)
-    with st.expander('Novos membros', expanded=True):
+    with st.expander('New members', expanded=True):
         for member in members:
             st.write(f'{member["author"]} - {member["time_elapsed"]}')
 
-pagina = st.sidebar.selectbox('Página', ['Upload Json','Picos de Comentarios', 'Maiores comentaristas', 'Particoes', 'Estátisticas', 'Membros'])
+pagina = st.sidebar.selectbox('Page', ['Upload Json','Comments peak', 'Top comment authors', 'Partitions', 'Stats', 'New members'])
 
-if pagina == 'Picos de Comentarios':
+if pagina == 'Comments peak':
     comments_peak()
-elif pagina == 'Maiores comentaristas':
+elif pagina == 'Top comment authors':
     most_comments()
-elif pagina == 'Particoes':
+elif pagina == 'Partitions':
     show_partitions()
-elif pagina == 'Estátisticas':
+elif pagina == 'Stats':
     show_stats()
-elif pagina == 'Membros':
+elif pagina == 'New members':
     show_new_members()
 else:
     landing_page()
