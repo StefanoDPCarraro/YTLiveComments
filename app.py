@@ -61,6 +61,8 @@ def show_stats():
     st.write(f'Número total de palavras: {sum([len(comment["message"].split()) for comment in comments_data])}')
     st.write(f'Número total de palavras únicas: {len(set([word for comment in comments_data for word in comment["message"].split()]))}')
     st.write(f'Média de palavras por comentário: {sum([len(comment["message"].split()) for comment in comments_data]) / len(comments_data)}')
+    _, new_mem = get_new_members(comments_data)
+    st.write(f'Número de membros novos: {len(new_mem)}')
 
 def show_new_members():
     st.title('Membros')
