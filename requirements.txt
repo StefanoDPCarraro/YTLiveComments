@@ -6,4 +6,3 @@ wordcloud
 nltk
 pandas
 matplotlib
-dotenv
