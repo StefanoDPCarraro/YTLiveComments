@@ -3,7 +3,7 @@ from member_count import get_new_members
 from nuvem import gerar_nuvem_palavras, file_to_json
 from stats import get_top_authors, get_author_comments
 from particoes import get_partitions
-from peaks import get_peaks
+from peaks import get_peaks, get_top_words, get_word_context
 
 st.session_state['comments_json'] = 'comments.json'
 st.session_state['partitions'] = get_partitions(st.session_state['comments_json'])
@@ -23,6 +23,15 @@ def comments_peak():
             st.write(f'Start: {peak["start"]}')
             st.write(f'End: {peak["end"]}')
             st.image(gerar_nuvem_palavras(peak['messages'], complemento=f'_pico_{index}'))
+            top_words_count = get_top_words(peak['messages'])
+            top_words = top_words_count.index.to_list()
+            word = st.selectbox('Top words', top_words)
+            print("Selected word:", word)
+
+            st.write(get_word_context(peak['messages'], word))
+            print(top_words)
+
+                        
 
 
 def most_comments():
