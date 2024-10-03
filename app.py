@@ -23,7 +23,7 @@ def comments_peak():
             st.write(f'Start: {peak["start"]}')
             st.write(f'End: {peak["end"]}')
             st.image(gerar_nuvem_palavras(peak['messages'], complemento=f'_pico_{index}'))
-            top_words_count = get_top_words(peak['messages'])
+            top_words_count = get_top_words(peak['messages'], n = 50)
             top_words = top_words_count.index.to_list()
             word = st.selectbox('Top words', top_words)
             print("Selected word:", word)
