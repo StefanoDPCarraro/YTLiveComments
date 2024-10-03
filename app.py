@@ -26,10 +26,8 @@ def comments_peak():
             top_words_count = get_top_words(peak['messages'])
             top_words = top_words_count.index.to_list()
             word = st.selectbox('Top words', top_words)
-            print("Selected word:", word)
 
             st.write(get_word_context(peak['messages'], word))
-            print(top_words)
 
                         
 
@@ -56,6 +54,11 @@ def show_partitions():
             st.write(f'Start: {partition["start"]}')
             st.write(f'End: {partition["end"]}')
             st.image(gerar_nuvem_palavras(partition['comments'], complemento=f'_particao_{index}'))
+            top_words_count = get_top_words(partition['comments'])
+            top_words = top_words_count.index.to_list()
+            word = st.selectbox('Top words', top_words)
+
+            st.write(get_word_context(partition['comments'], word))
 
 def show_stats():
     st.title('Stats')
