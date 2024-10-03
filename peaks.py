@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
 from nuvem import file_to_json
+from nltk.corpus import stopwords
 
 def format_timedelta(td):
     total_seconds = int(td.total_seconds())
@@ -70,6 +71,17 @@ def get_peaks(comments_json, mnt=10, top=3):
         plt.close()
 
     return peaks_array, path
+
+def get_top_words(data, n=10, language='portuguese'):
+    stop_words = set(stopwords.words(language))
+    words = ' '.join([comment['message'].lower() for comment in data]).split()
+    words_filtered = [word for word in words if word not in stop_words]
+    words_count = pd.Series(words_filtered).value_counts()
+    return words_count[:n]
+
+def get_word_context(data, word):
+    word_lower = word.lower()
+    return [comment['message'] for comment in data if word_lower in comment['message'].lower()]
 
 if __name__ == '__main__':
     get_peaks('comments.json')
