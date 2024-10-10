@@ -4,6 +4,7 @@ from nuvem import gerar_nuvem_palavras, file_to_json
 from stats import get_top_authors, get_author_comments
 from particoes import get_partitions
 from peaks import get_peaks, get_top_words, get_word_context
+import plotly.graph_objects as go
 
 st.session_state['comments_json'] = 'comments.json'
 st.session_state['partitions'] = get_partitions(st.session_state['comments_json'])
@@ -61,16 +62,48 @@ def show_partitions():
             st.write(get_word_context(partition['comments'], word))
 
 def show_stats():
-    st.title('Stats')
+    st.title('Key Stats')
+
     comments_data = file_to_json(st.session_state['comments_json'])
-    st.write(f'Total comments: {len(comments_data)}')
-    st.write(f'Total comment authors: {len(set([comment["author"] for comment in comments_data]))}')
-    st.write(f'Average of comments by person: {len(comments_data) / len(set([comment["author"] for comment in comments_data]))}')
-    st.write(f'Total words: {sum([len(comment["message"].split()) for comment in comments_data])}')
-    st.write(f'Total unique words: {len(set([word for comment in comments_data for word in comment["message"].split()]))}')
-    st.write(f'Average words by comment: {sum([len(comment["message"].split()) for comment in comments_data]) / len(comments_data)}')
+
+    total_comments = len(comments_data)
+    total_authors = len(set([comment["author"] for comment in comments_data]))
+    avg_comments_per_person = total_comments / total_authors
+    total_words = sum([len(comment["message"].split()) for comment in comments_data])
+    unique_words = len(set([word for comment in comments_data for word in comment["message"].split()]))
+    avg_words_per_comment = total_words / total_comments
     _, new_mem = get_new_members(comments_data)
-    st.write(f'New members count: {len(new_mem)}')
+    new_members_count = len(new_mem)
+
+    def create_card(title, value, card_color="lightgray", text_color="black"):
+        fig = go.Figure(go.Indicator(
+            mode="number",
+            value=value,
+            title={"text": title, "font": {"size": 24, "color": text_color}},
+            number={"font": {"size": 40, "color": text_color}},
+            domain={'x': [0, 1], 'y': [0, 1]}
+        ))
+        
+        fig.update_layout(
+            paper_bgcolor=card_color,
+            margin=dict(l=20, r=20, t=50, b=50),
+            height=200
+        )
+        return fig
+
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.plotly_chart(create_card("Total Comments", total_comments, card_color="lightblue", text_color="darkblue"), use_container_width=True)
+        st.plotly_chart(create_card("Total Words", total_words, card_color="lightgreen", text_color="darkgreen"), use_container_width=True)
+
+    with col2:
+        st.plotly_chart(create_card("Total Authors", total_authors, card_color="lightyellow", text_color="darkorange"), use_container_width=True)
+        st.plotly_chart(create_card("Unique Words", unique_words, card_color="lightpink", text_color="darkred"), use_container_width=True)
+
+    with col3:
+        st.plotly_chart(create_card("Avg Comments/Person", avg_comments_per_person, card_color="lightgray", text_color="black"), use_container_width=True)
+        st.plotly_chart(create_card("New Members", new_members_count, card_color="lightgray", text_color="black"), use_container_width=True)
 
 def show_new_members():
     st.title('Membros')
