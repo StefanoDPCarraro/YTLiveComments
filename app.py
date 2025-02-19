@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from member_count import get_new_members
 from nuvem import gerar_nuvem_palavras, file_to_json
@@ -6,13 +7,31 @@ from particoes import get_partitions
 from peaks import get_peaks, get_top_words, get_word_context
 import plotly.graph_objects as go
 
-st.session_state['comments_json'] = 'comments.json'
-st.session_state['partitions'] = get_partitions(st.session_state['comments_json'])
+st.set_page_config(
+    page_title='StreamVis',
+    page_icon='📊',
+    layout='wide'
+)
+
+if st.session_state.get('comments_json') is None:
+    st.session_state['comments_json'] = 'comments.json'
+
+if st.session_state.get('partitions') is None:
+    st.session_state['partitions'] = get_partitions(st.session_state['comments_json'])
+
+UPLOAD_DIR = 'input'
+
+if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR)
 
 def landing_page():
-    st.title('In progress')
+    st.title('StreamVis')
 
     st.write('Select one of the options on the sidebar to start analyzing the comments')
+
+    json_file = st.file_uploader('Upload comments.json', type='json')
+
+    st.button('Refresh', on_click=lambda: upload_json(json_file))
 
 def comments_peak():
     st.title('Comments Peak')
@@ -24,14 +43,11 @@ def comments_peak():
             st.write(f'Start: {peak["start"]}')
             st.write(f'End: {peak["end"]}')
             st.image(gerar_nuvem_palavras(peak['messages'], complemento=f'_pico_{index}'))
-            top_words_count = get_top_words(peak['messages'])
+            top_words_count = get_top_words(peak['messages'], n = 50)
             top_words = top_words_count.index.to_list()
             word = st.selectbox('Top words', top_words)
 
             st.write(get_word_context(peak['messages'], word))
-
-                        
-
 
 def most_comments():
     st.title('Top commenters')
@@ -40,7 +56,7 @@ def most_comments():
         authors = get_top_authors(st.session_state['comments_json'], n=n_authors)
         for author, count in authors:
             with st.expander(f'{author}: {count} comments'):
-                path, comments = get_author_comments(author, 'comments.json')
+                path, comments = get_author_comments(author, st.session_state['comments_json'])
                 st.image(path)
                 for comment in comments:
                     st.write(f"{comment['time_elapsed']} - {comment['message']}")
@@ -73,7 +89,10 @@ def show_stats():
     unique_words = len(set([word for comment in comments_data for word in comment["message"].split()]))
     avg_words_per_comment = total_words / total_comments
     _, new_mem = get_new_members(comments_data)
-    new_members_count = len(new_mem)
+    if new_mem is not None:
+        new_members_count = len(new_mem)
+    else:
+        new_members_count = 0
 
     def create_card(title, value, card_color="lightgray", text_color="black"):
         fig = go.Figure(go.Indicator(
@@ -106,13 +125,25 @@ def show_stats():
         st.plotly_chart(create_card("New Members", new_members_count, card_color="lightgray", text_color="black"), use_container_width=True)
 
 def show_new_members():
-    st.title('Membros')
+    st.title('Members')
     member_data = file_to_json(st.session_state['comments_json'])
     path, members = get_new_members(member_data)
-    st.image(path)
-    with st.expander('New members', expanded=True):
-        for member in members:
-            st.write(f'{member["author"]} - {member["time_elapsed"]}')
+    if path is not None:
+        st.image(path)
+        with st.expander('New members', expanded=True):
+            for member in members:
+                st.write(f'{member["author"]} - {member["time_elapsed"]}')
+    else:
+        st.write('No new members found')
+
+def upload_json(json_file):
+    if json_file is None:
+        return
+    with open('input/comments.json', 'wb') as f:
+        f.write(json_file.getbuffer())
+    
+    st.session_state['comments_json'] = 'input/comments.json'
+    
 
 pagina = st.sidebar.selectbox('Page', ['Upload Json','Comments peak', 'Top comment authors', 'Partitions', 'Stats', 'New members'])
 

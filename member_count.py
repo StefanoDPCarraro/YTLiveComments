@@ -17,6 +17,9 @@ def get_new_members(json_data, interval = 20):
         if 'just became a member!' in comment['message']:
             member_messages.append(comment)
 
+    if not member_messages:
+        return None, None
+
     df = pd.DataFrame(member_messages)
     df['timestamp'] = pd.to_datetime(df['time_elapsed'])
     df.set_index('timestamp', inplace=True)
